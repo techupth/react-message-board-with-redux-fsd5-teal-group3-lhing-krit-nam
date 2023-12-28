@@ -1,23 +1,53 @@
+import { useSelector, useDispatch } from "react-redux";
+import { addText } from "../slices/messageBoardSlice";
+import { submitText, deleteText } from "../slices/displayTextSlice";
 function MessageBoard() {
+  // state ของ input
+  const textResult = useSelector((state) => {
+    return state.text;
+  });
+  // state ของ ที่โชว์ข้อความ
+  const display = useSelector((state) => {
+    return state.display;
+  });
+  const dispatch = useDispatch();
   return (
     <div className="app-wrapper">
-      <h1 class="app-title">Message board</h1>
-      <div class="message-input-container">
+      <h1 className="app-title">Message board</h1>
+      <div className="message-input-container">
         <label>
           <input
             id="message-text"
             name="message-text"
             type="text"
             placeholder="Enter message here"
+            onChange={(event) => dispatch(addText(event.target.value))}
+            value={textResult}
           />
         </label>
-        <button className="submit-message-button">Submit</button>
+        <button
+          className="submit-message-button"
+          onClick={() => dispatch(submitText(textResult))}
+        >
+          Submit
+        </button>
       </div>
-      <div class="board">
-        <div className="message">
-          <h1>Hello all ! This is first message.</h1>
-          <button className="delete-button">x</button>
-        </div>
+      <div className="board">
+        {display.map((item, index) => {
+          return (
+            <div className="message" key={index}>
+              <h1>{item}</h1>
+              <button
+                className="delete-button"
+                onClick={() => {
+                  dispatch(deleteText(index));
+                }}
+              >
+                x
+              </button>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
